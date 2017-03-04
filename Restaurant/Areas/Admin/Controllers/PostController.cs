@@ -13,22 +13,28 @@ namespace Restaurant.Areas.Admin.Controllers
     [RoutePrefix("post")]
     public class PostController : Controller
     {
-        private readonly IPostRepository _repos;
+        private readonly IPostRepository _repository;
+
+        public PostController()
+            : this(new PostRepository()) { }
+
         public PostController(IPostRepository repository)
         {
-            _repos = repository;
+            _repository = repository;
         }
         // GET: Admin/Post
         public ActionResult Index()
         {
-            return View();
+            var posts = _repository.GetAll();
+            return View(posts);
         }
 
         [HttpGet]
         [Route("create")]
         public ActionResult Create()
         {
-            var model = new Post();
+            var model = new Post() { Tags = new List<string>() { "test-1", "test-2" } };
+
             return View(model);
         }
 
@@ -42,6 +48,8 @@ namespace Restaurant.Areas.Admin.Controllers
                 return View(model);
             }
 
+            _repository.Create(model);
+
             return RedirectToAction("index");
         }
 
@@ -49,11 +57,14 @@ namespace Restaurant.Areas.Admin.Controllers
         [Route("edit/{postId}")]
         public ActionResult Edit(string postId)
         {
-            var post = _repos.Get(postId);
-            if(post == null)
+            // TODO: to retrieve the model from the data store
+            var post = _repository.Get(postId);
+
+            if (post == null)
             {
                 return HttpNotFound();
             }
+
             return View(post);
         }
 
@@ -62,17 +73,20 @@ namespace Restaurant.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(string postId, Post model)
         {
-            var post = _repos.Get(postId);
-            if(post == null)
+            var post = _repository.Get(postId);
+
+            if (post == null)
             {
                 return HttpNotFound();
             }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            _repos.Edit(postId, model);
+            // TODO: update model in data store
+            _repository.Edit(postId, model);
 
             return RedirectToAction("index");
         }

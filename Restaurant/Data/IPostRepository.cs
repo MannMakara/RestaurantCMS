@@ -11,5 +11,7 @@ namespace Restaurant.Data
     {
         Post Get(string id);
         void Edit(string id, Post updatedItem);
+        void Create(Post model);
+        IEnumerable<Post> GetAll();
     }
 }

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Restaurant.App_Start;
+using Restaurant.Models;
+using Restaurant.Models.ModelBinders;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -13,6 +16,9 @@ namespace Restaurant
         {
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+            AuthDbConfig.RegisterAdmin();
+
+            ModelBinders.Binders.Add(typeof(Post), new PostModelBinder());
         }
     }
 }
